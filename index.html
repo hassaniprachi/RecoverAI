@@ -1,0 +1,1893 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RecoverAI | Smart Payment Recovery</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --bg: #f8f6fc;
+    --surface: #ffffff;
+    --surface-soft: #fcf9ff;
+    --text: #25213b;
+    --muted: #89849f;
+    --border: #eee8f5;
+    --purple: #9461e8;
+    --pink: #ed55b5;
+    --sidebar: #ffffff;
+    --shadow: 0 8px 30px rgba(76, 48, 112, 0.06);
+}
+
+body.dark {
+    --bg: #17182d;
+    --surface: #22243e;
+    --surface-soft: #292541;
+    --text: #f4efff;
+    --muted: #aaa4c2;
+    --border: #383653;
+    --purple: #ad83ff;
+    --pink: #ef71c5;
+    --sidebar: #1e2038;
+    --shadow: 0 8px 30px rgba(0,0,0,0.15);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Inter, Arial, sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    transition: background .25s, color .25s;
+}
+
+.sidebar {
+    width: 245px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background: var(--sidebar);
+    border-right: 1px solid var(--border);
+    padding: 30px 19px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.logo {
+    font-size: 27px;
+    font-weight: 800;
+    margin: 5px 10px 48px;
+    letter-spacing: -1.3px;
+}
+
+.logo span {
+    background: linear-gradient(120deg, var(--purple), var(--pink));
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.nav-heading {
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+    margin: 20px 12px 13px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 14px;
+    margin-bottom: 7px;
+    border-radius: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition: .2s;
+}
+
+.nav-item:hover {
+    background: var(--surface-soft);
+    color: var(--purple);
+}
+
+.nav-item.active {
+    color: white;
+    background: linear-gradient(110deg, var(--purple), var(--pink));
+    box-shadow: 0 5px 16px rgba(166, 99, 225, .22);
+}
+
+.sidebar-bottom {
+    margin-top: 24px;
+    position: static;
+}
+
+.sidebar-note {
+    background: linear-gradient(140deg, #f1e5ff, #ffe6f5);
+    color: #49316f;
+    border-radius: 15px;
+    padding: 17px;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.sidebar-note strong {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.main {
+    margin-left: 245px;
+    padding: 35px 40px;
+    max-width: 1700px;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    gap: 20px;
+}
+
+h1 {
+    font-size: 27px;
+    letter-spacing: -.8px;
+    margin-bottom: 7px;
+}
+
+.subtitle {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.top-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.theme-btn, .ai-badge {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.theme-btn {
+    cursor: pointer;
+}
+
+.ai-badge {
+    color: var(--purple);
+}
+
+.welcome-banner {
+    background: linear-gradient(110deg, #f0e5ff, #ffeaf6);
+    border-radius: 19px;
+    padding: 25px 28px;
+    margin-bottom: 24px;
+    color: #382657;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    overflow: hidden;
+}
+
+.welcome-banner h2 {
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+
+.welcome-banner p {
+    font-size: 12px;
+    line-height: 1.7;
+    color: #79638e;
+}
+
+.banner-icon {
+    font-size: 43px;
+    padding-right: 20px;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 17px;
+    margin-bottom: 24px;
+}
+
+.stat-card, .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 17px;
+    box-shadow: var(--shadow);
+}
+
+.stat-card {
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stat-label {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.stat-icon {
+    width: 35px;
+    height: 35px;
+    display: grid;
+    place-items: center;
+    border-radius: 11px;
+    background: #f2eaff;
+    color: #8959d9;
+    font-size: 16px;
+}
+
+.stat-value {
+    font-size: 27px;
+    font-weight: 800;
+    margin: 15px 0 5px;
+    letter-spacing: -.8px;
+}
+
+.stat-description {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.panel {
+    padding: 23px;
+    margin-bottom: 23px;
+    scroll-margin-top: 20px;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 21px;
+    gap: 12px;
+}
+
+.panel-header h2 {
+    font-size: 16px;
+    letter-spacing: -.3px;
+}
+
+.panel-subtitle {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 5px;
+}
+
+.pill {
+    background: #fff0e7;
+    color: #e27b39;
+    padding: 7px 12px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.table-wrap { overflow-x: auto; }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    min-width: 650px;
+}
+
+th {
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 14px 10px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+}
+
+td {
+    padding: 15px 10px;
+    font-size: 11px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+}
+
+.status-select {
+    padding: 9px 11px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--surface);
+    color: var(--text);
+    font-size: 11px;
+    cursor: pointer;
+    min-width: 120px;
+}
+
+.status-select:disabled {
+    opacity: .6;
+    cursor: wait;
+}
+
+.analyze-btn {
+    display: block;
+    margin-top: 10px;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 9px;
+    background: linear-gradient(135deg, #8b5cf6, #d946ef);
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.analyze-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 92, 246, 0.25);
+}
+
+.analyze-btn:disabled {
+    opacity: 0.6;
+    cursor: wait;
+    transform: none;
+}
+
+.status-message {
+    display: block;
+    font-size: 10px;
+    margin-top: 5px;
+    color: var(--muted);
+}
+
+.empty {
+    color: var(--muted);
+    font-size: 13px;
+    padding: 24px;
+    text-align: center;
+}
+
+.report {
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 21px;
+}
+
+.report-title {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    margin-bottom: 21px;
+}
+
+.report-icon {
+    width: 47px;
+    height: 47px;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, #eee1ff, #ffe3f4);
+    color: #8959d9;
+    border-radius: 14px;
+    font-size: 21px;
+}
+
+.report-title h3 {
+    font-size: 15px;
+    margin-bottom: 5px;
+}
+
+.report-title p {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.report-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.report-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    padding: 19px;
+    min-width: 0;
+}
+
+.report-card h4 {
+    color: var(--purple);
+    font-size: 12px;
+    margin-bottom: 13px;
+}
+
+.report-content {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.9;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+}
+
+.message-card { grid-column: 1 / -1; }
+
+.message-content {
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    padding: 18px;
+    border-radius: 11px;
+    color: var(--text);
+    font-size: 12px;
+    line-height: 1.9;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.copy-btn {
+    margin-top: 14px;
+    padding: 11px 17px;
+    border: none;
+    border-radius: 9px;
+    background: linear-gradient(110deg, var(--purple), var(--pink));
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.copy-btn:hover { opacity: .88; }
+
+.paypal-panel {
+    background: linear-gradient(135deg, var(--surface), var(--surface-soft));
+}
+
+.paypal-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 25px;
+}
+
+.paypal-content h3 {
+    font-size: 17px;
+    margin-bottom: 9px;
+}
+
+.paypal-content p {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+.paypal-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    padding: 18px;
+    min-width: 0;
+}
+
+#paypal-button-container {
+    max-width: 100%;
+}
+
+.footer {
+    text-align: center;
+    padding: 18px;
+    color: var(--muted);
+    font-size: 10px;
+}
+
+@media (max-width: 1100px) {
+    .main { padding: 28px 24px; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 750px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding: 17px;
+    }
+
+    .logo { margin: 0 0 15px; }
+
+    .nav-heading, .sidebar-bottom { display: none; }
+
+    .sidebar nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    .nav-item {
+        padding: 10px;
+        margin: 0;
+        font-size: 11px;
+    }
+
+    .main {
+        margin-left: 0;
+        padding: 20px 15px;
+    }
+
+    .topbar { align-items: flex-start; }
+    .stats, .report-grid, .paypal-content { grid-template-columns: 1fr; }
+    .message-card { grid-column: auto; }
+    .welcome-banner { padding: 20px; }
+    .banner-icon { display: none; }
+}
+
+@media (max-width: 420px) {
+    .ai-badge { display: none; }
+    .topbar h1 { font-size: 23px; }
+}
+
+/* Webhook Activity Timeline */
+
+#activityTimeline {
+    position: relative;
+    padding: 10px 0 10px 12px;
+}
+
+.activity-item {
+    position: relative;
+    display: flex;
+    gap: 16px;
+    padding: 0 0 25px 8px;
+    border-left: 2px solid #e5d9fa;
+}
+
+.activity-item:last-child {
+    border-left-color: transparent;
+    padding-bottom: 0;
+}
+
+.activity-dot {
+    position: absolute;
+    left: -7px;
+    top: 3px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #9b72e8;
+    border: 2px solid white;
+    box-shadow: 0 0 0 2px #e5d9fa;
+}
+
+.activity-details {
+    min-width: 0;
+}
+
+.activity-details strong {
+    display: block;
+    font-size: 14px;
+    color: var(--text-color, #30264a);
+    overflow-wrap: anywhere;
+}
+
+.activity-details p {
+    margin: 6px 0;
+    font-size: 13px;
+    color: #887c9d;
+    overflow-wrap: anywhere;
+}
+
+.activity-details small {
+    font-size: 12px;
+    color: #a49ab3;
+}
+
+.activity-details strong {
+    color: #38245f !important;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+}
+
+.activity-details p {
+    color: #625477 !important;
+}
+
+.activity-details small {
+    color: #796b91 !important;
+}
+.activity-details strong {
+    color: #ffffff !important;
+}
+
+/* Event-specific timeline colors */
+
+.activity-item.activated .activity-dot {
+    background: #22c55e;
+}
+
+.activity-item.suspended .activity-dot {
+    background: #ef4444;
+}
+
+.activity-item.created .activity-dot {
+    background: #3b82f6;
+}
+
+.activity-item.completed .activity-dot {
+    background: #10b981;
+}
+
+/* Recovery Summary Cards */
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.summary-card {
+    padding: 22px;
+    border-radius: 14px;
+    background: #f8f5fc;
+    border: 1px solid #e9e0f5;
+}
+
+.summary-card h3 {
+    font-size: 14px;
+    margin: 0 0 12px;
+    color: #625477;
+}
+
+.summary-card p {
+    font-size: 30px;
+    font-weight: 750;
+    margin: 0;
+}
+
+.pending-card p {
+    color: #d69b24;
+}
+
+.contacted-card p {
+    color: #8b5bd6;
+}
+
+.recovered-card p {
+    color: #269b68;
+}
+
+.unresolved-card p {
+    color: #dc5555;
+}
+
+@media (max-width: 650px) {
+    .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+/* AI Assistant Chat */
+.chat-panel {
+    display: flex;
+    flex-direction: column;
+    min-height: 520px;
+}
+
+.chat-messages {
+    flex: 1;
+    min-height: 300px;
+    max-height: 420px;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.chat-message {
+    max-width: 80%;
+    padding: 13px 16px;
+    border-radius: 14px;
+    font-size: 13px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+.chat-message.bot {
+    align-self: flex-start;
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+}
+
+.chat-message.user {
+    align-self: flex-end;
+    color: white;
+    background: linear-gradient(110deg, var(--purple), var(--pink));
+}
+
+.chat-input-area {
+    display: flex;
+    gap: 10px;
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+}
+
+.chat-input-area input {
+    flex: 1;
+    min-width: 0;
+    padding: 13px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface-soft);
+    color: var(--text);
+    outline: none;
+}
+
+.chat-send-btn {
+    border: none;
+    border-radius: 10px;
+    padding: 0 22px;
+    color: white;
+    background: linear-gradient(110deg, var(--purple), var(--pink));
+    cursor: pointer;
+    font-weight: 600;
+}
+.ai-avatar-btn {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: 2px solid var(--purple);
+    background: var(--surface-soft);
+    font-size: 22px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: auto;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+    flex-shrink: 0;
+}
+#ai-assistant {
+    display: none;
+    position: fixed;
+    bottom: 90px;
+    right: 30px;
+    width: 380px;
+    max-width: calc(100vw - 40px);
+    height: 520px;
+    z-index: 1000;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+}
+
+#ai-assistant .chat-panel {
+    height: 100%;
+    min-height: 0;
+}
+#ai-assistant .chat-panel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+}
+
+#ai-assistant .chat-messages {
+    flex: 1;
+    min-height: 0;
+    max-height: none;
+    overflow-y: auto;
+}
+
+#ai-assistant .chat-input-area {
+    display: flex;
+    gap: 10px;
+    padding: 14px;
+    flex-shrink: 0;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+}
+
+#ai-assistant .chat-input-area input {
+    flex: 1;
+    min-width: 0;
+}
+#ai-assistant {
+    display: none;
+    flex-direction: column;
+    height: 520px;
+    max-height: 80vh;
+    overflow: hidden;
+}
+
+#ai-assistant .panel-header {
+    flex-shrink: 0;
+}
+
+#ai-assistant .chat-panel {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    height: auto;
+    min-height: 0;
+}
+
+#ai-assistant .chat-messages {
+    flex: 1;
+    min-height: 0;
+    max-height: none;
+    overflow-y: auto;
+}
+
+#ai-assistant .chat-input-area {
+    flex-shrink: 0;
+    display: flex;
+    padding: 14px;
+    gap: 10px;
+    border-top: 1px solid var(--border);
+}
+
+#ai-assistant .chat-input-area input {
+    flex: 1;
+    min-width: 0;
+}
+#ai-assistant .chat-messages {
+    padding: 16px;
+    align-items: stretch;
+    gap: 12px;
+}
+
+#ai-assistant .chat-message {
+    width: fit-content;
+    max-width: 90%;
+    box-sizing: border-box;
+    padding: 12px 15px;
+    text-align: left;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+#ai-assistant .chat-message.bot {
+    align-self: flex-start;
+    margin-right: auto;
+    border-radius: 14px 14px 14px 4px;
+}
+
+#ai-assistant .chat-message.user {
+    align-self: flex-end;
+    margin-left: auto;
+    border-radius: 14px 14px 4px 14px;
+    text-align: left;
+}
+#ai-assistant .chat-message,
+#ai-assistant .chat-message.bot {
+    text-align: left !important;
+    width: fit-content;
+    max-width: 85%;
+    margin-right: auto;
+    margin-left: 0;
+    padding: 14px 16px;
+    box-sizing: border-box;
+    line-height: 1.6;
+}
+
+#ai-assistant .chat-message.user {
+    margin-left: auto;
+    margin-right: 0;
+    text-align: left !important;
+}
+
+#ai-assistant .chat-messages {
+    align-items: stretch;
+}
+#ai-assistant .chat-message,
+#ai-assistant .chat-message * {
+    text-align: left !important;
+}
+
+#ai-assistant .chat-message {
+    display: block;
+    white-space: normal;
+    padding: 14px 16px;
+    line-height: 1.6;
+}
+
+#ai-assistant .chat-message.bot {
+    align-self: flex-start;
+}
+
+#ai-assistant .chat-message.user {
+    align-self: flex-end;
+}
+.sidebar .logo {
+    margin-bottom: 12px !important;
+}
+
+.sidebar .sidebar-bottom {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    position: static !important;
+    width: 100%;
+}
+
+.sidebar {
+    justify-content: flex-start !important;
+    gap: 0;
+}
+.ai-avatar-label {
+    color: var(--text-muted);
+    font-size: 11px;
+    text-align: center;
+    opacity: 0.65;
+    margin-top: 8px;
+    margin-bottom: 16px;
+}
+#closeAiChat {
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 28px;
+    font-weight: 300;
+    line-height: 1;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 8px;
+}
+
+#closeAiChat:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+}
+#ai-assistant .panel-header p {
+    font-size: 12px;
+    color: #aaa6c5;
+    font-weight: 400;
+    line-height: 1.5;
+    margin-top: 5px;
+}
+
+</style>
+</head>
+
+<body>
+
+<aside class="sidebar">
+    <div class="logo">Recover<span>AI.</span></div>
+     <div class="sidebar-bottom">
+        <div class="sidebar-note">
+            <strong>✦ Powered by AI</strong>
+            Smarter payment recovery with Gemini intelligence.
+        </div>
+    </div>
+
+    <div class="nav-heading">WORKSPACE</div>
+    <nav>
+        <a href="#dashboard" class="nav-item active">▦ Dashboard</a>
+        <a href="#failed-payments" class="nav-item">↗ Failed Payments</a>
+        <a href="#ai-recommendations" class="nav-item">✦ AI Intelligence</a>
+        
+        <a href="#subscription" class="nav-item">◈ Subscription</a>
+    </nav>
+
+    
+    
+    
+    <button class="ai-avatar-btn" id="aiAvatarBtn" title="Open AI Assistant">
+    ✨
+</button>
+<div class="ai-avatar-label">Chat with AI Assistant</div>
+</aside>
+
+<main class="main" id="dashboard">
+
+    <header class="topbar">
+        <div>
+            <h1>Dashboard</h1>
+            <p class="subtitle">Welcome back! Here's your recovery overview.</p>
+        </div>
+
+        <div class="top-actions">
+            <button class="theme-btn" id="themeToggle" onclick="toggleTheme()">☾ Dark mode</button>
+            <div class="ai-badge">✦ AI Powered</div>
+        </div>
+    </header>
+
+    <section class="welcome-banner">
+        <div>
+            <h2>Your payments, under control ✨</h2>
+            <p>Monitor failed subscriptions, understand payment issues and<br>
+            recover customers with AI-powered recommendations.</p>
+        </div>
+        <div class="banner-icon">💜</div>
+    </section>
+
+    <section class="stats">
+        <div class="stat-card">
+            <div class="stat-top">
+                <div class="stat-label">Total Events</div>
+                <div class="stat-icon">◈</div>
+            </div>
+            <div class="stat-value" id="totalEvents">--</div>
+            <div class="stat-description">PayPal webhook events</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <div class="stat-label">Failed Payments</div>
+                <div class="stat-icon">↗</div>
+            </div>
+            <div class="stat-value" id="failedPayments">--</div>
+            <div class="stat-description">Detected by RecoverAI</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <div class="stat-label">AI Analyses</div>
+                <div class="stat-icon">✦</div>
+            </div>
+            <div class="stat-value" id="aiAnalyses">--</div>
+            <div class="stat-description">Recommendations generated</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <div class="stat-label">Recovery Status</div>
+                <div class="stat-icon">✓</div>
+            </div>
+            <div class="stat-value">Live</div>
+            <div class="stat-description">Recovery progress monitoring</div>
+        </div>
+    </section>
+
+
+<section class="panel" id="recovery-summary">
+    <div class="panel-header">
+        <div>
+            <h2>✦ Recovery Summary</h2>
+            <p class="panel-subtitle">Failed payment recovery breakdown.</p>
+        </div>
+        <span class="pill">Live Database</span>
+    </div>
+
+    <div class="summary-grid">
+        <div class="summary-card pending-card">
+            <h3>Pending</h3>
+            <p id="pendingCount">0</p>
+        </div>
+
+        <div class="summary-card contacted-card">
+            <h3>Contacted</h3>
+            <p id="contactedCount">0</p>
+        </div>
+
+        <div class="summary-card recovered-card">
+            <h3>Recovered</h3>
+            <p id="recoveredCount">0</p>
+        </div>
+
+        <div class="summary-card unresolved-card">
+            <h3>Unresolved</h3>
+            <p id="unresolvedCount">0</p>
+        </div>
+    </div>
+</section>
+
+<section class="panel" id="recovery-performance">
+    <div class="panel-header">
+        <div>
+            <h2>✦ Recovery Performance</h2>
+            <p class="panel-subtitle">Current status of detected failed payments.</p>
+        </div>
+        <span class="pill">Live Database</span>
+    </div>
+
+    <div style="max-width:450px; margin:auto;">
+        <canvas id="recoveryChart"></canvas>
+    </div>
+    <p class="panel-subtitle" style="text-align:center; margin-top:15px;">
+        Based on actual failed-payment records in SQLite.
+    </p>
+</section>
+
+
+<section class="panel" id="webhook-timeline">
+    <div class="panel-header">
+        <div>
+            <h2>✦ Webhook Activity Timeline</h2>
+            <p class="panel-subtitle">
+                Recent events received from PayPal.
+            </p>
+        </div>
+        <span class="pill">Live Activity</span>
+    </div>
+
+    <div id="activityTimeline">
+        <p class="panel-subtitle">Loading webhook activity...</p>
+    </div>
+</section>
+
+    <section class="panel" id="failed-payments">
+        <div class="panel-header">
+            <div>
+                <h2>↗ Recent Failed Payments</h2>
+                <p class="panel-subtitle">Monitor and update customer recovery progress.</p>
+            </div>
+            <span class="pill">Needs Attention</span>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>EVENT ID</th>
+                        <th>SUBSCRIPTION ID</th>
+                        <th>EVENT TYPE</th>
+                        <th>RECOVERY STATUS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="4" class="empty">Loading payment events...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="panel" id="ai-recommendations">
+        <div class="panel-header">
+            <div>
+                <h2>✦ AI Recovery Intelligence</h2>
+                <p class="panel-subtitle">Personalized insights generated by Gemini AI.</p>
+            </div>
+            <span class="pill">Gemini AI</span>
+        </div>
+
+        <div class="report">
+            <div class="report-title">
+                <div class="report-icon">✦</div>
+                <div>
+                    <h3>Recovery Analysis Report</h3>
+                    <p>Generated by RecoverAI Intelligence</p>
+                </div>
+            </div>
+
+            <div class="report-grid">
+                <div class="report-card">
+                    <h4>01 · Event Summary</h4>
+                    <div class="report-content" id="eventSummary">Waiting for AI analysis...</div>
+                </div>
+
+                <div class="report-card">
+                    <h4>02 · Subscription Reference</h4>
+                    <div class="report-content" id="subscriptionDetails">Waiting for subscription details...</div>
+                </div>
+
+                <div class="report-card">
+                    <h4>03 · Recommended Action</h4>
+                    <div class="report-content" id="recommendedAction">Waiting for AI recommendation...</div>
+                </div>
+
+                <div class="report-card">
+                    <h4>04 · Why Did It Happen?</h4>
+                    <div class="report-content" id="paymentInformation">Waiting for payment information...</div>
+                </div>
+
+                <div class="report-card message-card">
+                    <h4>05 · Customer Recovery Message</h4>
+                    <div class="message-content" id="customerMessage">Your customer recovery message will appear here.</div>
+                    <button class="copy-btn" onclick="copyRecoveryMessage()">Copy Message ↗</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel" id="ai-assistant">
+    <div class="panel-header">
+    <div>
+        <h2>✧ RecoverAI Assistant</h2>
+        <p>Ask questions about payment failures and recovery insights.</p>
+    </div>
+
+    <button id="closeAiChat" class="chat-close-btn">×</button>
+</div>
+
+    <div class="chat-panel">
+        <div class="chat-messages" id="chatMessages">
+            <div class="chat-message bot">
+    Hi! I'm your RecoverAI Assistant. 👋
+    Ask me about failed payments, subscription events,
+    recovery status, or AI recommendations.
+</div>
+        </div>
+
+        <div class="chat-input-area">
+            <input
+                type="text"
+                id="chatInput"
+                placeholder="Ask RecoverAI something..."
+            >
+            <button class="chat-send-btn" id="chatSendBtn">
+                Send
+            </button>
+        </div>
+    </div>
+</section>
+    
+<section class="panel paypal-panel" id="subscription">
+    <div class="panel-header">
+        <div>
+            <h2>◈ System & Webhook Monitor</h2>
+            <p class="panel-subtitle">Monitor your RecoverAI backend and PayPal integration.</p>
+        </div>
+        <span class="pill">Sandbox Environment</span>
+    </div>
+
+    <div class="paypal-content">
+        <div>
+            <h3>RecoverAI System Status</h3>
+            <p>Monitor backend availability and incoming PayPal webhook activity.</p>
+        </div>
+
+        <div class="paypal-box">
+            <p><strong>Backend API</strong></p>
+            <p id="backendStatus">Checking connection...</p>
+            <p>Last Synced: <span id="lastSynced">Not synced yet</span></p>
+
+            <hr style="margin:15px 0; border:0; border-top:1px solid var(--border);">
+
+            <p><strong>PayPal Webhook Endpoint</strong></p>
+            <p>/paypal-webhook</p>
+
+            <hr style="margin:15px 0; border:0; border-top:1px solid var(--border);">
+
+            <p><strong>Total Webhook Events</strong></p>
+            <p id="webhookEventCount">--</p>
+
+            <button class="copy-btn" onclick="checkSystemStatus()">
+                ↻ Refresh Status
+            </button>
+        </div>
+    </div>
+</section>
+
+
+    <footer class="footer">
+        RecoverAI · Intelligent Payment Recovery · Powered by Gemini AI & PayPal
+    </footer>
+
+</main>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const API_BASE = "http://127.0.0.1:8000";
+
+// THEME SWITCHER
+function toggleTheme() {
+    document.body.classList.toggle("dark");
+
+    const isDark = document.body.classList.contains("dark");
+
+    document.getElementById("themeToggle").textContent =
+        isDark ? "☀ Light mode" : "☾ Dark mode";
+
+    localStorage.setItem("recoverai-theme", isDark ? "dark" : "light");
+}
+
+if (localStorage.getItem("recoverai-theme") === "dark") {
+    document.body.classList.add("dark");
+    document.getElementById("themeToggle").textContent = "☀ Light mode";
+}
+
+// SIDEBAR NAVIGATION
+document.querySelectorAll(".nav-item[href^='#']").forEach(link => {
+    link.addEventListener("click", () => {
+        document.querySelectorAll(".nav-item").forEach(item => {
+            item.classList.remove("active");
+        });
+        link.classList.add("active");
+    });
+});
+
+
+
+
+let recoveryChart = null;
+
+function displayRecoveryChart(payments) {
+    const statuses = ["Pending", "Contacted", "Recovered", "Unresolved"];
+
+    const counts = statuses.map(status =>
+        payments.filter(payment =>
+            (payment.recovery_status || "Pending") === status
+        ).length
+    );
+
+    const total = counts.reduce((sum, count) => sum + count, 0);
+
+    const centerTextPlugin = {
+        id: "centerText",
+        afterDraw(chart) {
+            const { ctx, chartArea } = chart;
+
+            if (!chartArea) return;
+
+            const centerX = (chartArea.left + chartArea.right) / 2;
+            const centerY = (chartArea.top + chartArea.bottom) / 2;
+
+            ctx.save();
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+
+            ctx.font = "800 30px Inter";
+            ctx.fillStyle = getComputedStyle(document.body)
+                .getPropertyValue("--text").trim();
+            ctx.fillText(total, centerX, centerY - 10);
+
+            ctx.font = "500 11px Inter";
+            ctx.fillStyle = getComputedStyle(document.body)
+                .getPropertyValue("--muted").trim();
+            ctx.fillText("Failed Payments", centerX, centerY + 17);
+
+            ctx.restore();
+        }
+    };
+
+    const ctx = document.getElementById("recoveryChart");
+
+    if (recoveryChart) {
+        recoveryChart.destroy();
+    }
+
+    recoveryChart = new Chart(ctx, {
+        type: "doughnut",
+
+        plugins: [centerTextPlugin],
+
+        data: {
+            labels: statuses,
+            datasets: [{
+                data: counts,
+                backgroundColor: [
+                    "#f5b942",
+                    "#9461e8",
+                    "#269b68",
+                    "#ed6675"
+                ],
+                borderWidth: 0,
+                hoverOffset: 8
+            }]
+        },
+
+        options: {
+            responsive: true,
+            cutout: "70%",
+            plugins: {
+                legend: {
+                    position: "bottom"
+                }
+            }
+        }
+    });
+}
+                
+
+// LOAD DASHBOARD
+async function loadDashboard() {
+    try {
+        const response = await fetch(`${API_BASE}/dashboard-data`);
+
+        if (!response.ok) {
+            throw new Error("Dashboard API request failed");
+        }
+
+        const data = await response.json();
+        displayRecoveryChart(data.recent_payments || []);
+        displayWebhookTimeline(data.recent_activity || []);
+        const summary = data.recovery_summary || {};
+
+document.getElementById("pendingCount").textContent =
+    summary.Pending ?? 0;
+
+document.getElementById("contactedCount").textContent =
+    summary.Contacted ?? 0;
+
+document.getElementById("recoveredCount").textContent =
+    summary.Recovered ?? 0;
+
+document.getElementById("unresolvedCount").textContent =
+    summary.Unresolved ?? 0;
+
+        document.getElementById("totalEvents").textContent =
+            data.total_events ?? 0;
+
+        document.getElementById("failedPayments").textContent =
+            data.failed_payments ?? 0;
+
+        document.getElementById("aiAnalyses").textContent =
+            data.ai_analyses ?? 0;
+
+        const tbody = document.querySelector("tbody");
+
+        if (data.recent_payments && data.recent_payments.length > 0) {
+            tbody.innerHTML = data.recent_payments.map(payment => {
+                const eventId = escapeHTML(payment.event_id);
+                const subscriptionId = escapeHTML(payment.subscription_id || "N/A");
+                const eventType = escapeHTML(payment.event_type);
+                const currentStatus = payment.recovery_status || "Pending";
+
+                return `
+                    <tr>
+                        <td>${eventId}</td>
+                        <td>${subscriptionId}</td>
+                        <td>${eventType}</td>
+                        <td>
+    <select
+        class="status-select"
+        data-event-id="${eventId}"
+        onchange="updateRecoveryStatus(this)"
+    >
+        <option value="Pending" ${currentStatus === "Pending" ? "selected" : ""}>Pending</option>
+        <option value="Contacted" ${currentStatus === "Contacted" ? "selected" : ""}>Contacted</option>
+        <option value="Unresolved" ${currentStatus === "Unresolved" ? "selected" : ""}>Unresolved</option>
+    </select>
+
+    <span class="status-message" aria-live="polite"></span>
+
+    <button
+        class="analyze-btn"
+        data-event-id="${eventId}"
+        onclick="analyzePayment(this)"
+    >
+        ✦ Analyze with AI
+    </button>
+</td>
+                    </tr>
+                `;
+            }).join("");
+        } else {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="4" class="empty">No failed payments found.</td>
+                </tr>
+            `;
+        }
+
+        if (data.latest_analysis) {
+            displayAnalysis(data.latest_analysis);
+        }
+
+    } catch (error) {
+        console.error("Dashboard loading error:", error);
+
+        document.querySelector("tbody").innerHTML = `
+            <tr>
+                <td colspan="4" class="empty">
+                    Could not load dashboard data. Check that the backend is running.
+                </td>
+            </tr>
+        `;
+    }
+}
+
+// UPDATE RECOVERY STATUS
+async function updateRecoveryStatus(selectElement) {
+    const eventId = selectElement.dataset.eventId;
+    const newStatus = selectElement.value;
+    const messageElement = selectElement.nextElementSibling;
+
+    selectElement.disabled = true;
+    messageElement.textContent = "Saving...";
+
+    try {
+        const response = await fetch(
+            `${API_BASE}/recovery-status/${encodeURIComponent(eventId)}`,
+            {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ status: newStatus })
+            }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.detail || "Could not update status");
+        }
+
+        messageElement.textContent = "✓ Saved successfully";
+        messageElement.style.color = "#269b68";
+
+    } catch (error) {
+        messageElement.textContent = error.message;
+        messageElement.style.color = "#e05252";
+        console.error("Status update error:", error);
+
+    } finally {
+        selectElement.disabled = false;
+    }
+}
+
+async function analyzePayment(button) {
+    const eventId = button.dataset.eventId;
+    const originalText = button.textContent;
+
+    button.disabled = true;
+    button.textContent = "⏳ Analyzing with Gemini...";
+
+    try {
+        const response = await fetch(
+            `${API_BASE}/analyze-payment/${encodeURIComponent(eventId)}`,
+            { method: "POST" }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.detail || "AI analysis failed");
+        }
+
+        displayAnalysis(result.recommendation);
+
+        button.textContent = "✓ Analysis Complete";
+
+        document.getElementById("ai-recommendations")
+            .scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+    } catch (error) {
+        console.error("AI analysis error:", error);
+        button.textContent = "⚠ Try Again";
+        alert(error.message);
+
+    } finally {
+        button.disabled = false;
+
+        if (button.textContent === "✓ Analysis Complete") {
+            setTimeout(() => {
+                button.textContent = originalText;
+            }, 3000);
+        }
+    }
+}
+
+// DISPLAY GEMINI ANALYSIS
+function displayAnalysis(analysis) {
+
+    const sections = [
+        {
+            id: "eventSummary",
+            heading: /^\s*#{0,6}\s*1[.)·-]?\s*Event Summary\b/im,
+            next: /^\s*#{0,6}\s*2[.)·-]?\s*Subscription Details\b/im
+        },
+        {
+            id: "subscriptionDetails",
+            heading: /^\s*#{0,6}\s*2[.)·-]?\s*Subscription Details\b/im,
+            next: /^\s*#{0,6}\s*3[.)·-]?\s*Relevant Payment Information\b/im
+        },
+        {
+            id: "paymentInformation",
+            heading: /^\s*#{0,6}\s*3[.)·-]?\s*Relevant Payment Information\b/im,
+            next: /^\s*#{0,6}\s*4[.)·-]?\s*Recommended Action\b/im
+        },
+        {
+            id: "recommendedAction",
+            heading: /^\s*#{0,6}\s*4[.)·-]?\s*Recommended Action\b/im,
+            next: /^\s*#{0,6}\s*5[.)·-]?\s*A Professional Customer Recovery Message\b/im
+        },
+        {
+            id: "customerMessage",
+            heading: /^\s*#{0,6}\s*5[.)·-]?\s*A Professional Customer Recovery Message\b/im,
+            next: null
+        }
+    ];
+
+    function cleanText(text) {
+        return text
+            .replace(/^\s*[:#*\s]+/, "")
+            .replace(/\*\*/g, "")
+            .replace(/^#{1,6}\s*/gm, "")
+            .replace(/^>\s?/gm, "")
+            .replace(/^\s*[-*]\s*/gm, "")
+            .replace(/`/g, "")
+            .trim();
+    }
+
+    sections.forEach(section => {
+
+        const startMatch = section.heading.exec(analysis);
+
+        const element = document.getElementById(section.id);
+
+        if (!startMatch) {
+            element.textContent = "Information not available.";
+            return;
+        }
+
+        const contentStart = startMatch.index + startMatch[0].length;
+
+        const remaining = analysis.substring(contentStart);
+
+        const endMatch = section.next
+            ? section.next.exec(remaining)
+            : null;
+
+        const content = endMatch
+            ? remaining.substring(0, endMatch.index)
+            : remaining;
+
+        element.textContent = cleanText(content) || "Information not available.";
+    });
+}
+
+    function cleanText(text) {
+        return text
+            .replace(/^\s*[:#*]+/gm, "")
+            .replace(/\*\*/g, "")
+            .replace(/^#{1,6}\s*/gm, "")
+            .replace(/^>\s?/gm, "")
+            .replace(/^\s*[-*]\s*/gm, "")
+            .replace(/`/g, "")
+            .trim();
+    }
+
+// ESCAPE HTML
+function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+    })[character]);
+}
+
+// COPY CUSTOMER MESSAGE
+async function copyRecoveryMessage() {
+    const message = document
+        .getElementById("customerMessage")
+        .textContent.trim();
+
+    try {
+        await navigator.clipboard.writeText(message);
+        alert("Customer recovery message copied!");
+    } catch (error) {
+        alert("Unable to copy message. Please copy it manually.");
+    }
+}
+
+loadDashboard();
+
+
+async function checkSystemStatus() {
+    const status = document.getElementById("backendStatus");
+    const count = document.getElementById("webhookEventCount");
+    const lastSynced = document.getElementById("lastSynced");
+
+    status.textContent = "Checking...";
+    
+    try {
+        const response = await fetch(`${API_BASE}/dashboard-data`);
+
+        if (!response.ok) {
+            throw new Error("Backend unavailable");
+        }
+
+        const data = await response.json();
+
+        status.textContent = "● Connected";
+        status.style.color = "#269b68";
+
+        count.textContent = data.total_events ?? 0;
+        lastSynced.textContent = new Date().toLocaleTimeString();
+
+    } catch (error) {
+        status.textContent = "● Disconnected";
+        status.style.color = "#e05252";
+        count.textContent = "--";
+        lastSynced.textContent = "Sync failed";
+    }
+}
+checkSystemStatus();
+// Automatically refresh dashboard every 30 seconds
+setInterval(() => {
+    loadDashboard();
+    checkSystemStatus();
+}, 30000);
+
+
+function displayWebhookTimeline(events) {
+    const container = document.getElementById("activityTimeline");
+
+    if (!container) return;
+
+    if (!events || events.length === 0) {
+        container.innerHTML = `
+            <p class="panel-subtitle">No webhook activity found.</p>
+        `;
+        return;
+    }
+
+    container.innerHTML = events.map(event => {
+        const eventType = escapeHTML(event.event_type || "Unknown event");
+        const subscriptionId = escapeHTML(event.subscription_id || "Not available");
+        const createdAt = escapeHTML(event.created_at || "");
+        const eventClass = event.event_type.includes("ACTIVATED") ? "activated"
+    : event.event_type.includes("SUSPENDED") ? "suspended"
+    : event.event_type.includes("CREATED") ? "created"
+    : event.event_type.includes("COMPLETED") ? "completed"
+    : "";
+
+        return `
+                <div class="activity-dot"></div>
+                <div class="activity-details">
+                    <strong>${eventType}</strong>
+                    <p>Subscription: ${subscriptionId}</p>
+                    <small>${createdAt}</small>
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+// AI CHAT ASSISTANT
+const aiAvatarBtn = document.getElementById("aiAvatarBtn");
+const aiAssistant = document.getElementById("ai-assistant");
+
+aiAvatarBtn.addEventListener("click", () => {
+    aiAssistant.style.display = "flex";
+    aiAssistant.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+});
+const closeAiChat = document.getElementById("closeAiChat");
+
+closeAiChat.addEventListener("click", () => {
+    aiAssistant.style.display = "none";
+});
+
+const chatMessages = document.getElementById("chatMessages");
+const chatInput = document.getElementById("chatInput");
+const chatSendBtn = document.getElementById("chatSendBtn");
+
+function addChatMessage(message, sender) {
+    const messageDiv = document.createElement("div");
+
+   messageDiv.className = sender === "user"
+    ? "chat-message user"
+    : "chat-message bot";
+
+    messageDiv.textContent = message;
+
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    return messageDiv;
+}
+
+async function sendChatMessage() {
+    const message = chatInput.value.trim();
+
+    if (!message) return;
+
+    addChatMessage(message, "user");
+    chatInput.value = "";
+    chatSendBtn.disabled = true;
+
+    const loadingMessage = addChatMessage("Thinking...", "bot");
+
+    try {
+        const response = await fetch(`${API_BASE}/chat`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ message: message })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.detail || "Something went wrong.");
+        }
+
+        loadingMessage.textContent = data.reply;
+
+    } catch (error) {
+        loadingMessage.textContent =
+            "Sorry, I couldn't connect to RecoverAI. Please try again.";
+
+        console.error("Chat Error:", error);
+
+    } finally {
+        chatSendBtn.disabled = false;
+        chatInput.focus();
+    }
+}
+
+chatSendBtn.addEventListener("click", sendChatMessage);
+
+chatInput.addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+        sendChatMessage();
+    }
+});
+
+</script>
+
+<!-- PAYPAL SUBSCRIPTION CHECKOUT -->
+<script src="https://www.paypal.com/sdk/js?client-id=BAApFkXmr98_GvN0yrdQ2xT7ordAYUOmwx-QDHh1_lAoNLzJm-A7wVM_EGEAxRWE_r-d3g0-v-OqLPtS60&vault=true&intent=subscription"></script>
+
+<script>
+paypal.Buttons({
+    style: {
+        shape: "rect",
+        color: "gold",
+        layout: "vertical",
+        label: "subscribe"
+    },
+
+    createSubscription: function(data, actions) {
+        return actions.subscription.create({
+            plan_id: "P-1G9662394C162310CNLXNFGY"
+        });
+    },
+
+    onApprove: function(data, actions) {
+        alert(
+            "Subscription approved! Subscription ID: " +
+            data.subscriptionID
+        );
+
+        console.log("Subscription ID:", data.subscriptionID);
+    },
+
+    onError: function(err) {
+        console.error("PayPal Checkout Error:", err);
+        alert("PayPal checkout failed. Please try again.");
+    }
+
+}).render("#paypal-button-container");
+</script>
+
+</body>
+</html>
