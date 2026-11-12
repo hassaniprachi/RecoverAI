@@ -3,43 +3,49 @@
 
 RecoverAI is an AI-powered subscription payment monitoring and recovery assistant built using the PayPal Developer Sandbox and Google Gemini.
 
-It helps subscription businesses understand failed payment events, view recovery insights, and interact with an AI assistant to get recommendations for handling payment failures.
+It helps subscription businesses monitor subscription payment events, understand payment failures, view AI-generated recovery insights, and interact with an AI assistant to get recommendations for handling payment issues.
 
 ## 🚀 Problem Statement
 
 Subscription businesses lose revenue when recurring payments fail due to expired cards, insufficient funds, or payment declines.
 
-RecoverAI aims to make failed-payment monitoring and recovery insights easier through webhook-based event tracking and AI-powered assistance.
+Understanding these failures and deciding what action to take can be time-consuming.
+
+RecoverAI aims to simplify failed-payment monitoring and recovery insights through PayPal webhook integration and AI-powered assistance.
 
 ## 💡 Key Features
 
-- **PayPal Integration:** Integrates with the PayPal Sandbox and Subscriptions API.
+- **PayPal Integration:** Integrates with the PayPal Developer Sandbox and Subscriptions API.
 - **Webhook Monitoring:** Receives and processes subscription-related PayPal webhook events.
 - **Payment Failure Detection:** Identifies failed subscription payment events.
-- **AI Recovery Insights:** Uses Google Gemini to generate recovery recommendations.
+- **AI Recovery Insights:** Uses Google Gemini to generate contextual recovery recommendations.
 - **AI Chat Assistant:** Allows users to ask questions about payment failures, subscription events, and recovery insights.
-- **Dashboard:** Displays payment and subscription information through a web interface.
+- **Dashboard:** Displays subscription and payment information through a web interface.
+- **Event Storage:** Stores webhook event information using SQLite.
 
-## 🛠️ Tech Stack
+## 🛠️ Tools and Technologies Used
 
-| Technology | Purpose |
+| Technology / Tool | Purpose |
 |---|---|
 | Python | Backend development |
-| FastAPI | API and webhook server |
-| PayPal Developer Sandbox | Payment and subscription integration |
-| Google Gemini | AI-powered assistant |
-| SQLite | Event and application data storage |
-| HTML, CSS, JavaScript | Frontend dashboard |
-| Ngrok | Exposing local webhook endpoint during testing |
+| FastAPI | Backend API and webhook server |
+| PayPal Developer Sandbox | Subscription and payment integration |
+| PayPal Subscriptions API | Subscription management |
+| PayPal Webhooks | Receives subscription-related event notifications |
+| Google Gemini (`gemini-2.5-flash`) | AI-powered insights and chat responses |
+| SQLite | Stores webhook events and application data |
+| HTML, CSS, JavaScript | Frontend dashboard and chat interface |
+| Ngrok | Exposes the local webhook endpoint during testing |
+| GitHub | Source code hosting and version control |
 
 ## 🏗️ Project Architecture
 
 1. PayPal generates subscription-related events.
 2. PayPal sends webhook notifications to the RecoverAI backend.
-3. FastAPI receives and processes the events.
-4. Event information is stored in SQLite.
-5. Gemini uses available event data and the user's question to generate contextual responses.
-6. The frontend dashboard displays information and provides an AI chat interface.
+3. FastAPI receives and processes the webhook events.
+4. Event information is stored in an SQLite database.
+5. Google Gemini uses available payment-event information and the user's question to generate contextual responses.
+6. The frontend dashboard displays subscription information and provides an interactive AI chat assistant.
 
 ## 📂 Project Structure
 
@@ -63,11 +69,23 @@ RecoverAI/
 ├── view_ai.py
 ├── view_database.py
 ├── product_info.txt
+├── requirements.txt
+├── .env.example
 ├── .gitignore
+├── LICENSE
 └── README.md
 ```
 
-## ⚙️ Setup Instructions
+## ⚙️ Installation and Setup
+
+### Prerequisites
+
+- Python 3 installed
+- Git installed
+- Visual Studio Code
+- VS Code Live Server extension
+- PayPal Developer Sandbox account
+- Google Gemini API key
 
 ### 1. Clone the repository
 
@@ -85,11 +103,15 @@ source venv/bin/activate
 
 ### 3. Install dependencies
 
-Install the Python packages required by the backend and AI integration.
+```bash
+pip install -r requirements.txt
+```
 
 ### 4. Configure environment variables
 
-Create a `.env` file in the project root:
+Create a `.env` file in the project root directory.
+
+Use `.env.example` as a template and add your own credentials:
 
 ```env
 Client_id=YOUR_PAYPAL_CLIENT_ID
@@ -99,56 +121,89 @@ PAYPAL_WEBHOOK_ID=YOUR_PAYPAL_WEBHOOK_ID
 GEMINI_API_KEY=YOUR_GEMINI_API_KEY
 ```
 
-Never commit your `.env` file or expose API credentials.
+You must provide your own PayPal Sandbox credentials and Gemini API key.
+
+**Important:** Never upload your actual `.env` file, API keys, client secrets, or access tokens to GitHub.
 
 ### 5. Start the backend
+
+Run:
 
 ```bash
 uvicorn webhook:app --host 127.0.0.1 --port 8000 --reload
 ```
 
-Backend API documentation:
+The backend will be available at:
 
-```text
-http://127.0.0.1:8000/docs
-```
+`http://127.0.0.1:8000`
+
+FastAPI interactive API documentation:
+
+`http://127.0.0.1:8000/docs`
+
+Keep the backend terminal running.
 
 ### 6. Start the frontend
 
-Open `index.html` using VS Code Live Server.
+1. Open the RecoverAI project folder in Visual Studio Code.
+2. Open `index.html`.
+3. Right-click the file.
+4. Select **Open with Live Server**.
+5. The RecoverAI dashboard will open in your browser.
 
 ### 7. Configure PayPal webhooks
 
-Configure your PayPal Sandbox webhook to point to your publicly accessible backend webhook URL.
+1. Open the PayPal Developer Dashboard.
+2. Select your Sandbox application.
+3. Configure a webhook using your publicly accessible backend URL.
+4. Select the required subscription and payment event types.
+5. For local development, use Ngrok to expose your FastAPI server.
 
-Use Ngrok during local development to expose the backend.
+Example Ngrok command:
+
+```bash
+ngrok http 8000
+```
+
+Use the generated HTTPS forwarding URL when configuring your PayPal webhook, with the appropriate webhook endpoint path.
 
 ## 🧪 Testing
 
 The project supports testing of:
-- PayPal Sandbox authentication
-- Product and subscription setup
-- Subscription webhook event reception
-- Payment failure event processing
-- AI chat responses based on stored application data
+
+- PayPal Sandbox authentication.
+- Product and subscription setup.
+- Subscription webhook event reception.
+- Payment failure event processing.
+- Webhook event storage in SQLite.
+- AI chat responses based on stored application data.
+- AI-generated recovery recommendations.
+
+PayPal Sandbox webhook events and test events can be used to demonstrate webhook processing.
 
 ## 🔮 Future Improvements
 
-- Automated payment retry scheduling
-- Personalized customer recovery notifications
-- Advanced recovery analytics
-- Production PayPal integration
-- Improved subscription recovery tracking
+- Automated payment retry scheduling.
+- Personalized customer recovery notifications.
+- Advanced recovery analytics.
+- Production PayPal integration.
+- Improved subscription recovery tracking.
 
-## ⚠️ Current Scope
+## ⚠️ Current Project Scope
 
-RecoverAI currently focuses on webhook-based event monitoring, AI-generated recovery insights, and an interactive AI chat assistant.
+RecoverAI currently focuses on webhook-based subscription event monitoring, payment failure identification, AI-generated recovery insights, and an interactive AI chat assistant.
 
-Automated payment retries and customer notifications are future improvements, not currently implemented features.
+The AI assistant provides recommendations based on available application data.
+
+Automated payment retries and customer notifications are future improvements and are not currently implemented.
+
+The project uses the PayPal Developer Sandbox for demonstration and testing purposes.
 
 ## 👩‍💻 Project Repository
 
-[GitHub – RecoverAI](https://github.com/hassaniprachi/RecoverAI)
+**GitHub:** https://github.com/hassaniprachi/RecoverAI
+
+**License:** MIT License
 
 ---
 
